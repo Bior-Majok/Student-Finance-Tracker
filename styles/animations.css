@@ -1,0 +1,5 @@
+/* Simple animations */
+.card{transition:transform .18s ease,box-shadow .18s ease}
+.card:hover{transform:translateY(-4px)}
+.btn:focus, .form-input:focus{outline:none;box-shadow:var(--focus)}
+mark{background:yellow}

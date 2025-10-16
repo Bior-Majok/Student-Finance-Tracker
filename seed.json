@@ -1,0 +1,16 @@
+{
+  "records": [
+    {"id":"txn_1","description":"Lunch at cafeteria","amount":12.5,"category":"Food","date":"2025-09-25","createdAt":"2025-09-25T08:00:00Z","updatedAt":"2025-09-25T08:00:00Z"},
+    {"id":"txn_2","description":"Chemistry textbook","amount":89.99,"category":"Books","date":"2025-09-23","createdAt":"2025-09-23T09:00:00Z","updatedAt":"2025-09-23T09:00:00Z"},
+    {"id":"txn_3","description":"Bus pass","amount":45.0,"category":"Transport","date":"2025-09-20","createdAt":"2025-09-20T07:00:00Z","updatedAt":"2025-09-20T07:00:00Z"},
+    {"id":"txn_4","description":"Coffee with friends","amount":8.75,"category":"Entertainment","date":"2025-09-28","createdAt":"2025-09-28T10:30:00Z","updatedAt":"2025-09-28T10:30:00Z"},
+    {"id":"txn_5","description":"Lab fees","amount":150.0,"category":"Fees","date":"2025-09-10","createdAt":"2025-09-10T11:00:00Z","updatedAt":"2025-09-10T11:00:00Z"},
+    {"id":"txn_6","description":"Stationery pack","amount":6.25,"category":"Supplies","date":"2025-08-29","createdAt":"2025-08-29T13:00:00Z","updatedAt":"2025-08-29T13:00:00Z"},
+    {"id":"txn_7","description":"Movie night","amount":12.0,"category":"Entertainment","date":"2025-09-27","createdAt":"2025-09-27T20:00:00Z","updatedAt":"2025-09-27T20:00:00Z"},
+    {"id":"txn_8","description":"Library copy fees","amount":2.5,"category":"Fees","date":"2025-09-02","createdAt":"2025-09-02T12:00:00Z","updatedAt":"2025-09-02T12:00:00Z"},
+    {"id":"txn_9","description":"Snack - coffee","amount":3.5,"category":"Food","date":"2025-09-29","createdAt":"2025-09-29T08:45:00Z","updatedAt":"2025-09-29T08:45:00Z"},
+    {"id":"txn_10","description":"Textbook: Algorithms","amount":120.0,"category":"Books","date":"2025-09-15","createdAt":"2025-09-15T09:00:00Z","updatedAt":"2025-09-15T09:00:00Z"}
+  ],
+  "settings": {"baseCurrency":"USD","rates":{"RWF":1200,"EUR":0.92},"monthlyCap":500,"categories":["Food","Books","Transport","Entertainment","Fees","Other","Supplies"]},
+  "ui": {"sort":{"field":"date","dir":"desc"},"search":null,"caseSensitive":false}
+}

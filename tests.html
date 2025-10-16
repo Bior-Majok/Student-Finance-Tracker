@@ -1,0 +1,12 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Tests</title></head><body>
+<script>
+(function(){
+  function assert(a,msg){ if(!a) throw new Error(msg||'assert fail'); }
+  // validator tests
+  const v = /^(0|[1-9]\d*)(\.\d{1,2})?$/;
+  assert(v.test('0') && v.test('12.50') && !v.test('12.505'));
+  const d= /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+  assert(d.test('2025-09-29'));
+  alert('Basic tests passed');
+})();
+</script></body></html>

@@ -1,0 +1,36 @@
+:root{
+  --bg:#f6f8fa; --card:#fff; --primary:#1e88e5; --accent:#00a896; --muted:#6b7280; --danger:#e53935; --focus:3px solid rgba(30,136,229,0.25);
+}
+*{box-sizing:border-box}
+body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0; background:var(--bg); color:#111}
+.container{max-width:1100px;margin:0 auto;padding:1rem}
+.app-header{background:var(--primary);color:#fff;padding:.75rem 0}
+.logo h1{margin:0;font-size:1.125rem}
+.main-nav{background:#0f6ab4}
+.nav-list{display:flex;gap:.25rem;justify-content:center;margin:0;padding:.5rem;list-style:none}
+.nav-btn{background:none;border:none;color:#fff;padding:.5rem 1rem;border-radius:6px;cursor:pointer}
+.nav-btn.active{background:rgba(255,255,255,0.08)}
+.status-container{position:fixed;top:1rem;right:1rem;background:#111;color:#fff;padding:.5rem 1rem;border-radius:6px;opacity:0;transition:opacity .2s}
+.status-container.visible{opacity:1}
+.main-content{padding:1rem}
+.card{background:var(--card);border-radius:12px;padding:1rem;margin:1rem 0;box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.stat-card{padding:.75rem}
+.stat-label{color:var(--muted);font-size:.9rem}
+.stat-value{font-weight:700;font-size:1.25rem}
+.progress-bar{background:#eee;border-radius:999px;height:12px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--primary));width:0}
+.table-container{overflow:auto}
+.data-table{width:100%;border-collapse:collapse}
+.data-table th,.data-table td{padding:.5rem;text-align:left;border-bottom:1px solid #eee}
+.form-input,select{width:100%;padding:.5rem;border:1px solid #ddd;border-radius:6px}
+.btn{padding:.45rem .6rem;border-radius:6px;border:none;cursor:pointer}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-success{background:#10b981;color:#fff}
+.btn-danger{background:var(--danger);color:#fff}
+.error-message{color:var(--danger);font-size:.85rem;margin-top:.25rem}
+.required{color:var(--danger)}
+.empty-state{text-align:center;padding:1rem;color:var(--muted)}
+.sr-only{position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;background:#fff;padding:.5rem;border:1px solid #ddd}
