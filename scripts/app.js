@@ -3,14 +3,14 @@ import { validate, compileRegex, patterns } from './validators.js';
 import { safeCompile } from './search.js';
 import { createRowHTML } from './ui.js';
 
-// App state
+// This keeps track of all our data - transactions, settings, and what the user is currently viewing
 let state = {
   records: [],
   settings: { baseCurrency:'USD', rates:{RWF:1200,EUR:0.92}, monthlyCap:500 },
   ui: { sort:{field:'date',dir:'desc'}, search:null, caseSensitive:false }
 };
 
-// DOM
+// Getting references to all the buttons, forms, and display areas we need to work with
 const views = document.querySelectorAll('.view');
 const navButtons = document.querySelectorAll('.nav-btn');
 const tbody = document.getElementById('transactions-tbody');
@@ -43,20 +43,20 @@ const status = document.getElementById('status-container');
 
 let editingId = null;
 
-// Init
+// Starting up the app - loading saved data and setting everything up
 function init(){
   try {
-    // load from storage
+    // Load any transactions and settings we saved before
     const data = storage.load();
     if(data && data.records) {
-      // validate loaded data
+      // Double-check that our saved data isn't corrupted
       if(Array.isArray(data.records)) {
         state = data;
       } else {
         console.warn('Invalid data structure, using defaults');
       }
     }
-    // populate categories
+    // Create basic categories like Food, Books, Transport if this is the first time using the app
     ensureDefaultCategories();
     render();
     attachListeners();
@@ -120,7 +120,7 @@ function onSubmit(e){
     announce('Form has errors', 'polite');
     return;
   }
-  // clear errors
+  // Remove any error messages from the form
   document.querySelectorAll('.error-message').forEach(x=>x.textContent='');
 
   if(editingId){
@@ -182,10 +182,10 @@ function onImportFile(e){
     try{ 
       const parsed = JSON.parse(reader.result); 
       if(!parsed.records || !Array.isArray(parsed.records)) throw new Error('Invalid structure'); 
-      // validate items safely
+      // Check that each transaction has all the required information
       const bad = parsed.records.some(r=> !r.id||!r.description||typeof r.amount !== 'number'); 
       if(bad) throw new Error('Invalid record items'); 
-      // sanitize data before assignment
+      // Clean up the imported data to prevent security issues
       const sanitizedState = {
         records: parsed.records.map(r => ({
           id: String(r.id).replace(/[<>"'&]/g, ''),
@@ -219,11 +219,11 @@ function onMonthlyCapChange(e){ state.settings.monthlyCap = Number(e.target.valu
 function onClear(){ if(confirm('Clear all app data?')){ localStorage.clear(); state = {records:[], settings:{baseCurrency:'USD', rates:{RWF:1200,EUR:0.92}, monthlyCap:500}, ui:{sort:{field:'date',dir:'desc'}, search:null, caseSensitive:false}}; save(); render(); announce('All data cleared'); } }
 
 function render(){
-  // save current state
+  // Refresh what the user sees with any new changes
   populateCategorySelect();
   renderTable();
   updateStats();
-  // sync settings UI
+  // Update the settings page to show what's currently selected
   document.getElementById('monthly-cap').value = state.settings.monthlyCap;
   baseCurrency.value = state.settings.baseCurrency;
 }
@@ -232,7 +232,7 @@ function renderTable(){
   const re = safeCompile(state.ui.search, state.ui.caseSensitive);
   let list = [...state.records];
   
-  // filter by search if regex is valid
+  // Hide transactions that don't match what the user typed in the search box
   if(re && state.ui.search) {
     list = list.filter(rec => 
       re.test(rec.description) || 
@@ -241,7 +241,7 @@ function renderTable(){
     );
   }
   
-  // sort
+  // Put transactions in order - newest first, highest amount, alphabetical, etc.
   list.sort((a,b)=>{
     const f=state.ui.sort.field; const dir = state.ui.sort.dir==='asc'?1:-1;
     if(f==='amount') return (a.amount-b.amount)*dir;
@@ -252,7 +252,7 @@ function renderTable(){
   tbody.innerHTML='';
   if(list.length===0){ emptyState.style.display='block'; return } else emptyState.style.display='none';
   
-  // Use document fragment for better performance
+  // Create all the transaction rows together so the page loads faster
   const fragment = document.createDocumentFragment();
   list.forEach(rec=>{ 
     const div = document.createElement('div');

@@ -10,7 +10,7 @@ export function validate(record){
   const errors = {};
   
   try {
-    // Validate required fields exist
+    // Make sure we actually have a transaction to check
     if(!record || typeof record !== 'object') {
       errors.general = 'Invalid record format';
       return errors;
@@ -47,22 +47,22 @@ export function compileRegex(input, caseSensitive=false){
   if(!input || typeof input !== 'string') return null;
   
   try {
-    // Sanitize input to prevent ReDoS attacks
+    // Keep search patterns short to prevent the app from freezing
     const sanitized = input.slice(0, 100); // limit length
     
-    // strip surrounding slashes if user used /pattern/flags
+    // Handle cases where users type search patterns like /search/i
     let pattern = sanitized; 
     let flags = caseSensitive ? '' : 'i';
     
     if(pattern.startsWith('/') && pattern.lastIndexOf('/') > 0){
       const last = pattern.lastIndexOf('/');
       const userFlags = pattern.slice(last+1);
-      // Only allow safe flags
+      // Only let users use basic search options for safety
       flags = userFlags.replace(/[^gim]/g, '') || flags;
       pattern = pattern.slice(1, last);
     }
     
-    // Basic validation to prevent dangerous patterns
+    // Block search patterns that could crash the app
     if(pattern.includes('(?') || pattern.includes('*+') || pattern.includes('+*')) {
       return null; // Potentially dangerous regex
     }
