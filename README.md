@@ -22,4 +22,4 @@
 - Duplicate words (advanced): `/\b(\w+)\s+\1\b/`
 
 ## Demo
-Include an unlisted video link showing keyboard navigation and import/export.
+https://youtu.be/kADjWqE2yZg
