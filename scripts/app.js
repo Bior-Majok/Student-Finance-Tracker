@@ -39,6 +39,8 @@ const importFile = document.getElementById('import-file');
 const baseCurrency = document.getElementById('base-currency');
 const monthlyCapInput = document.getElementById('monthly-cap');
 const btnClear = document.getElementById('btn-clear-data');
+const btnAddCategory = document.getElementById('btn-add-category');
+const categoriesDisplay = document.getElementById('categories-display');
 const status = document.getElementById('status-container');
 
 let editingId = null;
@@ -83,19 +85,34 @@ function populateCategorySelect(){
 }
 
 function attachListeners(){
-  navButtons.forEach(btn=>btn.addEventListener('click', onNavigate));
-  form.addEventListener('submit', onSubmit);
-  btnCancel.addEventListener('click', resetForm);
-  tbody.addEventListener('click', onTableClick);
-  searchInput.addEventListener('input', onSearchChange);
-  caseCheckbox.addEventListener('change', onSearchChange);
-  sortButtons.forEach(b=>b.addEventListener('click', onSort));
-  btnExport.addEventListener('click', onExport);
-  btnImportTrigger.addEventListener('click', ()=>importFile.click());
-  importFile.addEventListener('change', onImportFile);
-  baseCurrency.addEventListener('change', onSettingsChange);
-  monthlyCapInput.addEventListener('change', onMonthlyCapChange);
-  btnClear.addEventListener('click', onClear);
+  try {
+    navButtons.forEach(btn=>btn.addEventListener('click', onNavigate));
+    if(form) form.addEventListener('submit', onSubmit);
+    if(btnCancel) btnCancel.addEventListener('click', resetForm);
+    if(tbody) tbody.addEventListener('click', onTableClick);
+    if(searchInput) {
+      searchInput.addEventListener('input', onSearchChange);
+      searchInput.addEventListener('keydown', onSearchKeyDown);
+    }
+    if(caseCheckbox) caseCheckbox.addEventListener('change', onSearchChange);
+    sortButtons.forEach(b=>b.addEventListener('click', onSort));
+    if(btnExport) btnExport.addEventListener('click', onExport);
+    if(btnImportTrigger && importFile) {
+      btnImportTrigger.addEventListener('click', ()=>importFile.click());
+      importFile.addEventListener('change', onImportFile);
+    }
+    if(baseCurrency) baseCurrency.addEventListener('change', onSettingsChange);
+    if(monthlyCapInput) monthlyCapInput.addEventListener('change', onMonthlyCapChange);
+    if(btnClear) btnClear.addEventListener('click', onClear);
+    if(btnAddCategory) btnAddCategory.addEventListener('click', onAddCategory);
+    if(categoriesDisplay) categoriesDisplay.addEventListener('click', onCategoryAction);
+    
+    // Enter key functionality
+    document.addEventListener('keydown', onKeyDown);
+  } catch(err) {
+    console.error('Error attaching listeners:', err);
+    announce('Some features may not work properly', 'assertive');
+  }
 }
 
 function onNavigate(e){
@@ -157,15 +174,26 @@ function onSort(e){ const field = e.currentTarget.dataset.sort; if(state.ui.sort
 
 function onExport(){ 
   try {
-    const data = JSON.stringify(state, null, 2); 
+    const exportData = {
+      records: state.records,
+      settings: {
+        baseCurrency: state.settings.baseCurrency,
+        monthlyCap: state.settings.monthlyCap,
+        categories: state.settings.categories
+      },
+      exportDate: new Date().toISOString()
+    };
+    
+    const data = JSON.stringify(exportData, null, 2); 
     const blob = new Blob([data], {type:'application/json'}); 
     const url = URL.createObjectURL(blob); 
-    const a=document.createElement('a'); 
-    a.href=url; 
-    a.download='student-finance-data.json'; 
+    const a = document.createElement('a'); 
+    a.href = url; 
+    a.download = `finance-data-${new Date().toISOString().split('T')[0]}.json`; 
+    a.style.display = 'none';
     document.body.appendChild(a); 
     a.click(); 
-    a.remove(); 
+    document.body.removeChild(a); 
     URL.revokeObjectURL(url); 
     announce('Export ready'); 
   } catch(err) {
@@ -177,38 +205,99 @@ function onExport(){
 function onImportFile(e){ 
   const f = e.target.files[0]; 
   if(!f) return; 
+  
+  // Validate file type and size
+  if(!f.name.endsWith('.json')) {
+    announce('Please select a JSON file', 'assertive');
+    return;
+  }
+  
+  if(f.size > 5 * 1024 * 1024) { // 5MB limit
+    announce('File too large (max 5MB)', 'assertive');
+    return;
+  }
+  
   const reader = new FileReader(); 
-  reader.onload = ()=>{ 
+  reader.onload = (event)=>{ 
     try{ 
-      const parsed = JSON.parse(reader.result); 
-      if(!parsed.records || !Array.isArray(parsed.records)) throw new Error('Invalid structure'); 
-      // Check that each transaction has all the required information
-      const bad = parsed.records.some(r=> !r.id||!r.description||typeof r.amount !== 'number'); 
-      if(bad) throw new Error('Invalid record items'); 
-      // Clean up the imported data to prevent security issues
-      const sanitizedState = {
-        records: parsed.records.map(r => ({
-          id: String(r.id).replace(/[<>"'&]/g, ''),
-          description: String(r.description).replace(/[<>"'&]/g, ''),
-          amount: Number(r.amount),
-          category: String(r.category).replace(/[<>"'&]/g, ''),
-          date: String(r.date),
+      const content = event.target.result;
+      if(typeof content !== 'string') {
+        throw new Error('Invalid file content');
+      }
+      
+      const parsed = JSON.parse(content); 
+      if(!parsed || typeof parsed !== 'object') {
+        throw new Error('Invalid JSON structure');
+      }
+      
+      if(!parsed.records || !Array.isArray(parsed.records)) {
+        throw new Error('Missing or invalid records array');
+      }
+      
+      // Validate each record thoroughly
+      const validRecords = [];
+      for(const r of parsed.records) {
+        if(!r || typeof r !== 'object') continue;
+        if(!r.id || !r.description || typeof r.amount !== 'number') continue;
+        if(isNaN(r.amount) || r.amount < 0) continue;
+        
+        // Sanitize and validate each field
+        const sanitized = {
+          id: String(r.id).replace(/[^a-zA-Z0-9_-]/g, '').substring(0, 50),
+          description: String(r.description).replace(/[<>"'&]/g, '').substring(0, 200),
+          amount: Math.max(0, Math.min(999999.99, Number(r.amount))),
+          category: String(r.category || 'Other').replace(/[^a-zA-Z0-9\s-]/g, '').substring(0, 50),
+          date: String(r.date).match(/^\d{4}-\d{2}-\d{2}$/) ? r.date : new Date().toISOString().split('T')[0],
           createdAt: r.createdAt || new Date().toISOString(),
           updatedAt: new Date().toISOString()
-        })),
-        settings: parsed.settings || state.settings,
-        ui: parsed.ui || state.ui
+        };
+        
+        if(sanitized.id && sanitized.description) {
+          validRecords.push(sanitized);
+        }
+      }
+      
+      if(validRecords.length === 0) {
+        throw new Error('No valid records found');
+      }
+      
+      // Safely merge settings
+      const newSettings = {...state.settings};
+      if(parsed.settings && typeof parsed.settings === 'object') {
+        if(parsed.settings.baseCurrency && typeof parsed.settings.baseCurrency === 'string') {
+          newSettings.baseCurrency = ['USD', 'EUR', 'RWF'].includes(parsed.settings.baseCurrency) ? parsed.settings.baseCurrency : 'USD';
+        }
+        if(typeof parsed.settings.monthlyCap === 'number' && parsed.settings.monthlyCap > 0) {
+          newSettings.monthlyCap = Math.min(999999, parsed.settings.monthlyCap);
+        }
+        if(Array.isArray(parsed.settings.categories)) {
+          newSettings.categories = parsed.settings.categories
+            .filter(c => typeof c === 'string' && c.length > 0)
+            .map(c => c.replace(/[^a-zA-Z0-9\s-]/g, '').substring(0, 30))
+            .slice(0, 20); // Limit categories
+        }
+      }
+      
+      state = {
+        records: validRecords,
+        settings: newSettings,
+        ui: state.ui // Keep current UI state
       };
-      state = sanitizedState; 
+      
       save(); 
       render(); 
-      announce('Import complete'); 
+      announce(`Import complete: ${validRecords.length} records loaded`); 
     }catch(err){ 
       console.error('Import error:', err);
-      announce('Import failed: ' + err.message, 'assertive'); 
+      announce('Import failed: ' + (err.message || 'Invalid file format'), 'assertive'); 
     } 
   }; 
-  reader.onerror = () => announce('File read error', 'assertive');
+  
+  reader.onerror = () => {
+    console.error('File read error');
+    announce('File read error', 'assertive');
+  };
+  
   reader.readAsText(f); 
 }
 
@@ -218,14 +307,109 @@ function onMonthlyCapChange(e){ state.settings.monthlyCap = Number(e.target.valu
 
 function onClear(){ if(confirm('Clear all app data?')){ localStorage.clear(); state = {records:[], settings:{baseCurrency:'USD', rates:{RWF:1200,EUR:0.92}, monthlyCap:500}, ui:{sort:{field:'date',dir:'desc'}, search:null, caseSensitive:false}}; save(); render(); announce('All data cleared'); } }
 
+function onAddCategory(){
+  try {
+    const name = prompt('Enter category name:');
+    if(!name) return;
+    
+    const trimmed = name.trim();
+    if(!trimmed) {
+      announce('Category name cannot be empty', 'assertive');
+      return;
+    }
+    
+    if(trimmed.length > 30) {
+      announce('Category name too long (max 30 characters)', 'assertive');
+      return;
+    }
+    
+    if(!/^[a-zA-Z][a-zA-Z0-9\s-]*$/.test(trimmed)) {
+      announce('Category name must start with a letter and contain only letters, numbers, spaces, and hyphens', 'assertive');
+      return;
+    }
+    
+    if(state.settings.categories.includes(trimmed)) {
+      announce('Category already exists', 'assertive');
+      return;
+    }
+    
+    if(state.settings.categories.length >= 20) {
+      announce('Maximum 20 categories allowed', 'assertive');
+      return;
+    }
+    
+    state.settings.categories.push(trimmed);
+    save();
+    render();
+    announce('Category added successfully');
+  } catch(err) {
+    console.error('Add category error:', err);
+    announce('Failed to add category', 'assertive');
+  }
+}
+
+function onKeyDown(e){
+  // Enter key on form inputs submits the form
+  if(e.key === 'Enter' && e.target.closest('#transaction-form')){
+    const form = document.getElementById('transaction-form');
+    if(form && e.target.tagName !== 'BUTTON'){
+      e.preventDefault();
+      form.dispatchEvent(new Event('submit'));
+    }
+  }
+}
+
+function onSearchKeyDown(e){
+  // Enter key in search triggers search
+  if(e.key === 'Enter'){
+    onSearchChange();
+  }
+}
+
+function onCategoryAction(e){
+  if(e.target.classList.contains('btn-remove-category')){
+    const category = e.target.dataset.category;
+    if(confirm(`Remove category "${category}"?`)){
+      state.settings.categories = state.settings.categories.filter(c => c !== category);
+      save();
+      render();
+      announce('Category removed');
+    }
+  }
+}
+
+function renderCategories(){
+  if(!categoriesDisplay) return;
+  categoriesDisplay.innerHTML = '';
+  state.settings.categories.forEach(cat => {
+    const div = document.createElement('div');
+    div.className = 'category-item';
+    div.innerHTML = `
+      <span class="category-name">${escapeHtml(cat)}</span>
+      <button class="btn btn-small btn-danger btn-remove-category" data-category="${escapeHtml(cat)}" aria-label="Remove ${escapeHtml(cat)} category">×</button>
+    `;
+    categoriesDisplay.appendChild(div);
+  });
+}
+
+function escapeHtml(str){return String(str).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));}
+
 function render(){
-  // Refresh what the user sees with any new changes
-  populateCategorySelect();
-  renderTable();
-  updateStats();
-  // Update the settings page to show what's currently selected
-  document.getElementById('monthly-cap').value = state.settings.monthlyCap;
-  baseCurrency.value = state.settings.baseCurrency;
+  try {
+    // Refresh what the user sees with any new changes
+    populateCategorySelect();
+    renderTable();
+    updateStats();
+    renderCategories();
+    
+    // Update the settings page to show what's currently selected
+    const monthlyCapEl = document.getElementById('monthly-cap');
+    if(monthlyCapEl) monthlyCapEl.value = state.settings.monthlyCap;
+    if(baseCurrency) baseCurrency.value = state.settings.baseCurrency;
+  } catch(err) {
+    console.error('Render error:', err);
+    announce('Display update failed', 'assertive');
+  }
 }
 
 function renderTable(){
