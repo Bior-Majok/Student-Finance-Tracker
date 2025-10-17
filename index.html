@@ -183,6 +183,67 @@
               <option value="RWF">RWF - Rwandan Franc</option>
               <option value="EUR">EUR - Euro</option>
             </select></div>
+        </div>
+
+        <div class="card">
+          <h3>Budget Settings</h3>
+          <div class="form-group"><label for="monthly-cap" class="form-label">Monthly Spending Cap</label><input
+              type="number" id="monthly-cap" class="form-input" step="0.01" min="0"></div>
+        </div>
+
+        <div class="card">
+          <h3>Categories</h3>
+          <div id="categories-display" class="categories-display"></div>
+          <button id="btn-add-category" class="btn btn-primary">Add Category</button>
+        </div>
+
+        <div class="card danger-zone">
+          <h3>Danger Zone</h3>
+          <button id="btn-clear-data" class="btn btn-danger">Clear All Data</button>
+        </div>
+      </section>
+
+      <!-- About -->
+      <section id="view-about" class="view" aria-labelledby="about-heading">
+        <h2 id="about-heading">About</h2>
+        <div class="card">
+          <h3>Student Finance Tracker</h3>
+          <p class="about-text">A comprehensive financial management tool designed for students to track expenses,
+            manage budgets, and gain insights into spending patterns.</p>
+          <h4>Key Features</h4>
+          <ul class="features-list">
+            <li>Track transactions with detailed categorization</li>
+            <li>Multi-currency support with custom exchange rates</li>
+            <li>Advanced regex-powered search</li>
+            <li>Monthly budget caps with visual tracking</li>
+          </ul>
+          <h4>Contact & Resources</h4>
+          <div class="contact-info">
+            <p><strong>GitHub:</strong> <a
+                href="https://github.com/Bior-Majok/Student-Finance-Tracker">github.com/Bior-Majok/Student-Finance-Tracker</a>
+            </p>
+            <p><strong>Email:</strong> <a href="mailto:your.email@example.com">your.email@example.com</a></p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <div class="container">
+      <p>&copy; 2025 Student Finance Tracker | Built with accessibility in mind</p>
+    </div>
+  </footer>
+
+  <script type="module" src="scripts/app.js"></script>
+</body>
+
+</html>rm-label">Base Currency</label><select
+              id="base-currency" class="form-input">
+              <option value="USD">USD - US Dollar</option>
+              <option value="RWF">RWF - Rwandan Franc</option>
+              <option value="EUR">EUR - Euro</option>
+            </select></div>
           <h4>Exchange Rates (relative to USD)</h4>
           <div id="exchange-rates" class="exchange-rates"></div>
           <div class="currency-converter">
