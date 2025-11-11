@@ -49,8 +49,11 @@ Student Finance Tracker is a web-based application designed to help students man
 
 ## In the demo video, I demonstrate:
 -User Interface from ideation of the design to the final design
+
 -Regex search with edge cases.
+
 -Import/export functionality.
+
 -Responsive design across multiple devices.
 
 Keyboard Map
