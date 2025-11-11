@@ -48,10 +48,16 @@ Student Finance Tracker is a web-based application designed to help students man
 - Duplicate words (advanced): /\b(\w+)\s+\1\b/
 
 ## In the demo video, I demonstrate:
-User Interface from ideation of the design to the final design
-Regex search with edge cases.
-Import/export functionality.
-Responsive design across multiple devices.
+-User Interface from ideation of the design to the final design
+-Regex search with edge cases.
+-Import/export functionality.
+-Responsive design across multiple devices.
+
+Keyboard Map
+Tab: Navigate through form fields and buttons
+Enter: Submit form or trigger actions
+Arrow keys: Navigate through transaction records (sorting, search)
+Escape: Close modals or exit editing mode
 
 ## Demo
 https://youtu.be/WL02y3hg3zQ
