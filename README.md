@@ -3,8 +3,8 @@
 **Theme:**  
 Student Finance Tracker is a web-based application designed to help students manage their personal finances effectively. Track your transactions, monitor budgets, and analyze your spending—all in one accessible and easy-to-use platform.
 
-**DEPLOYMENT**
-https://github.com/Bior-Majok/Student-Finance-Tracker.git
+**Github web page DEPLOYMENT**
+https://Bior-Majok.github.io/Student-Finance-Tracker/
 
 ## **Features**
 ### **1. Transaction Management**
