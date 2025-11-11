@@ -42,8 +42,7 @@ Student Finance Tracker is a web-based application designed to help students man
    ```bash
    git clone https://github.com/Bior-Majok/student-finance-tracker.git
 2.Navigate to the project directory
-cd student-finance-tracker-Bior-Majok
-
+  cd "Bior-Majok student-finance-tracker"
 
 ## In the demo video, I demonstrate:
 User Interface from ideation of the design to the final design
