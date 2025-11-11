@@ -35,19 +35,19 @@ Student Finance Tracker is a web-based application designed to help students man
 - **ARIA live regions** provide real-time updates for screen readers.  
 
 
-## **Run Locally**
+## **7. Run Locally**
 1. Clone the repository:  
    ```bash
    git clone https://github.com/Bior-Majok/student-finance-tracker.git
 
-## Regex catalog
+## 8. Regex catalog
 - Description: /^\S(?:.*\S)?$/ - no leading/trailing spaces
 - Amount: /^(0|[1-9]\d*)(\.\d{1,2})?$/
 - Date: /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/
 - Category: /^[A-Za-z]+(?:[ -][A-Za-z]+)*$/
 - Duplicate words (advanced): /\b(\w+)\s+\1\b/
 
-## In the demo video, I demonstrate:
+## 9.In the demo video, I demonstrate:
 -User Interface from ideation of the design to the final design
 
 -Regex search with edge cases.
@@ -56,7 +56,8 @@ Student Finance Tracker is a web-based application designed to help students man
 
 -Responsive design across multiple devices.
 
-**Keyboard Map**
+
+**10. Keyboard Map**
 -Tab: Navigate through form fields and buttons
 
 -Enter: Submit form or trigger actions
