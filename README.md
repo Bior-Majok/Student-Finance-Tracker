@@ -58,6 +58,7 @@ Student Finance Tracker is a web-based application designed to help students man
 
 
 **10. Keyboard Map**
+
 -Tab: Navigate through form fields and buttons
 
 -Enter: Submit form or trigger actions
