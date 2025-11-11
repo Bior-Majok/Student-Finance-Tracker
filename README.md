@@ -4,7 +4,6 @@
 Student Finance Tracker is a web-based application designed to help students manage their personal finances effectively. Track your transactions, monitor budgets, and analyze your spending—all in one accessible and easy-to-use platform.
 
 ## **Features**
-
 ### **1. Transaction Management**
 - **Add transactions** – Quickly record income or expenses.  
 - **Edit transactions** – Update transaction details if needed.  
@@ -35,12 +34,18 @@ Student Finance Tracker is a web-based application designed to help students man
 - Clear **focus states** for interactive elements.  
 - **ARIA live regions** provide real-time updates for screen readers.  
 
----
 
 ## **Run Locally**
 1. Clone the repository:  
    ```bash
    git clone https://github.com/Bior-Majok/student-finance-tracker.git
+
+## Regex catalog
+- Description: /^\S(?:.*\S)?$/ - no leading/trailing spaces
+- Amount: /^(0|[1-9]\d*)(\.\d{1,2})?$/
+- Date: /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/
+- Category: /^[A-Za-z]+(?:[ -][A-Za-z]+)*$/
+- Duplicate words (advanced): /\b(\w+)\s+\1\b/
 
 ## In the demo video, I demonstrate:
 User Interface from ideation of the design to the final design
